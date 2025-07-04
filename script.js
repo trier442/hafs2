@@ -1,7 +1,8 @@
 // Google Apps Script 웹 앱 URL
 const SCRIPT_URL = https://script.google.com/macros/s/AKfycbw3eyqBF_lnfuFf6oSs_hTrMuVy77CH4kfy3f56W4TRADRe29We72BS2UKewJAkIrer/exec'; // ❗ 2단계에서 얻은 URL로 교체하세요!
 
-// --- 문제 데이터 ---
+
+// --- 문제 데이터 (questions.js 내용을 여기에 통합) ---
 const questions = [
     {
         n: 1,
@@ -111,7 +112,7 @@ const questions = [
     {
         n: 7,
         type: 'image-mcq',
-        image: 'graph_p4.png',
+        image: 'graph_p4.png', // 이미지 파일 이름
         question: "7. 남한의 말에 대응되는 북한의 말을 살펴보고 북한 언어의 특징을 정리한 것으로 적절하지 않은 것은?",
         options: [
             "①", "②", "③", "④", "⑤"
@@ -192,7 +193,7 @@ const questions = [
     {
         n: 13,
         type: 'image-mcq',
-        image: 'graph_p6.png',
+        image: 'graph_p6.png', // 이미지 파일 이름
         passage: `
              <strong>&lt;보기&gt;</strong><br>
              <strong>[자료 1] 관련 정책 홈페이지 자료:</strong> 탄소 중립이란 ... 개념이다. ...<br>
@@ -408,7 +409,7 @@ const questions = [
 ];
 
 
-// --- 웹페이지 기능 구현 ---
+// --- 웹페이지 기능 구현 (기존 script.js 내용) ---
 document.addEventListener('DOMContentLoaded', function() {
     const testForm = document.getElementById('test-form');
     const submitBtn = document.getElementById('submitBtn');
@@ -471,19 +472,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (q.type.includes('mcq')) {
                 mcqTotal++;
                 const userAnswerNode = questionBlock.querySelector(`input[name="q${q.n}"]:checked`);
-                const labels = questionBlock.querySelectorAll('.options label');
                 
                 if (userAnswerNode) {
                     const userAnswer = userAnswerNode.value;
-                    const correctLabel = questionBlock.querySelector(`label[for="q${q.n}_${q.answer}"]`);
                     const userLabel = userAnswerNode.parentElement;
                     
                     if (userAnswer === q.answer) {
                         score++;
-                        correctLabel.classList.add('correct');
+                        userLabel.classList.add('correct');
                     } else {
                         userLabel.classList.add('incorrect');
-                        correctLabel.classList.add('correct');
+                        const correctLabel = questionBlock.querySelector(`label[for="q${q.n}_${q.answer}"]`);
+                        if(correctLabel) correctLabel.classList.add('correct');
                     }
                 } else {
                      const correctLabel = questionBlock.querySelector(`label[for="q${q.n}_${q.answer}"]`);
@@ -491,9 +491,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
             } else if (q.type.includes('sa')) {
-                const userAnswer = questionBlock.querySelector(`textarea[name="q${q.n}"]`).value;
+                // 서술형은 자동 채점 대신 모범 답안 표시
                 const feedbackP = document.createElement('p');
-                feedbackP.innerHTML = `<strong>[${q.n}번 서술형 모범 답안]</strong> ${q.answer}`;
+                feedbackP.style.marginTop = '10px';
+                feedbackP.style.fontWeight = 'bold';
+                feedbackP.innerHTML = `<strong>[${q.n}번 모범 답안]</strong> ${q.answer}`;
                 questionBlock.appendChild(feedbackP);
             }
         });
@@ -506,35 +508,40 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultTitle.textContent = `${studentName}님의 채점 결과`;
         scoreP.textContent = `객관식 점수: ${mcqTotal}개 중 ${score}개 정답`;
-        feedbackP.textContent = '녹색이 정답입니다. 서술형 문제는 모범 답안을 참고하여 직접 채점해주세요.';
+        feedbackP.innerHTML = '<strong>녹색</strong>이 정답입니다. <span class="incorrect">빨간색</span>은 오답입니다. 서술형 문제는 모범 답안을 참고하여 직접 채점해주세요.';
         resultDiv.style.display = 'block';
         
         window.scrollTo(0, 0);
 
         // Google Sheets에 데이터 전송
-        const data = {
-            name: studentName,
-            score: `${score}/${mcqTotal}`,
-            timestamp: new Date().toLocaleString("ko-KR", {timeZone: "Asia/Seoul"})
-        };
-        
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // 중요: CORS 에러 방지
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-             console.log('Success!', response);
-             submitBtn.textContent = '성적 기록 완료!';
-        })
-        .catch(error => {
-            console.error('Error!', error.message);
-            submitBtn.textContent = '전송 실패 - 다시 시도';
-            submitBtn.disabled = false;
-        });
-
+        if (SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            const data = {
+                name: studentName,
+                score: `${score}/${mcqTotal}`,
+                timestamp: new Date().toLocaleString("ko-KR", {timeZone: "Asia/Seoul"})
+            };
+            
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 중요: CORS 에러 방지
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            })
+            .then(response => {
+                 console.log('Success!', response);
+                 submitBtn.textContent = '성적 기록 완료!';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                submitBtn.textContent = '성적 기록 실패';
+                // 실패해도 다시 활성화하지 않음 (재제출 방지)
+            });
+        } else {
+            submitBtn.textContent = '채점 완료 (성적 기록 OFF)';
+        }
     });
 });
