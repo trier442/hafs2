@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.8;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 2px solid #005a9c;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 1.8em;
+    color: #003366;
+    margin: 0;
+}
+
+header h2 {
+    font-size: 1.4em;
+    color: #005a9c;
+    margin: 10px 0;
+}
+
+.info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.student-info {
+    margin-top: 20px;
+}
+
+.student-info input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.passage-box {
+    background-color: #eef5fa;
+    border: 1px solid #cce0f0;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 20px 0;
+    font-size: 0.95em;
+}
+
+.question-block {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.question-block h4 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #003366;
+}
+
+.question-block img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.options label {
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.options label:hover {
+    background-color: #f0f8ff;
+}
+
+.options input[type="radio"] {
+    margin-right: 10px;
+}
+
+textarea {
+    width: 95%;
+    padding: 10px;
+    font-family: 'Noto Sans KR', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 100px;
+    margin-top: 10px;
+}
+
+#submitBtn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+#submitBtn:hover {
+    background-color: #0056b3;
+}
+
+#submitBtn:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+#result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    display: none; /* Initially hidden */
+}
+
+#result h3 {
+    color: #005a9c;
+}
+
+.correct {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.incorrect {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.correct::before {
+    content: '✔️ ';
+    font-weight: bold;
+}
+
+.incorrect::before {
+    content: '❌ ';
+    font-weight: bold;
+}
